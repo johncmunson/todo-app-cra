@@ -7,12 +7,13 @@ import * as todoService from './services/todoService'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const [hydrating, setHydrating] = useState<boolean>(true)
+  const [loading, setLoading] = useState<boolean>(false)
 
   const fetchInitialData = async () => {
     const todos = await todoService.fetchTodos()
     setTodos(todos)
-    setLoading(false)
+    setHydrating(false)
   }
 
   useEffect(() => {
@@ -24,17 +25,14 @@ function App() {
 
     const newTodo = await todoService.addTodo(name)
 
-    setTodos([
-      ...todos,
-      newTodo
-    ])
+    setTodos([...todos, newTodo])
     setLoading(false)
   }
 
   const onSubmitNewName = async (id: string, newName: string) => {
     setLoading(true)
 
-    const todoIndex = todos.findIndex(todo => todo.id === id)
+    const todoIndex = todos.findIndex((todo) => todo.id === id)
     const todo = todos[todoIndex]
 
     setTodos([
@@ -51,7 +49,7 @@ function App() {
   const onCheckTodo = async (id: string) => {
     setLoading(true)
 
-    const todoIndex = todos.findIndex(todo => todo.id === id)
+    const todoIndex = todos.findIndex((todo) => todo.id === id)
     const todo = todos[todoIndex]
 
     const newIsComplete = !todo.isComplete
@@ -70,12 +68,9 @@ function App() {
   const onDeleteTodo = async (id: string) => {
     setLoading(true)
 
-    const todoIndex = todos.findIndex(todo => todo.id === id)
+    const todoIndex = todos.findIndex((todo) => todo.id === id)
 
-    setTodos([
-      ...todos.slice(0, todoIndex),
-      ...todos.slice(todoIndex + 1),
-    ])
+    setTodos([...todos.slice(0, todoIndex), ...todos.slice(todoIndex + 1)])
 
     await todoService.deleteTodo(id)
 
@@ -84,24 +79,27 @@ function App() {
 
   return (
     <div className="app">
-      <TodoInput
-        className='width-100 mb-05'
-        onSubmit={onCreateNewTodo}
-      />
-      {todos.map(todo => (
-        <TodoItem
-          key={todo.id}
-          id={todo.id}
-          name={todo.name}
-          isComplete={todo.isComplete}
-          onSubmitNewName={onSubmitNewName}
-          onCheckTodo={onCheckTodo}
-          onDeleteTodo={onDeleteTodo}
-        />
-      ))}
-      {loading && <div className="loading text-xs mt-1">Loading</div>}
+      {hydrating ? (
+        <div className="loading mt-1">Loading</div>
+      ) : (
+        <>
+          <TodoInput className="width-100 mb-05" onSubmit={onCreateNewTodo} />
+          {todos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              id={todo.id}
+              name={todo.name}
+              isComplete={todo.isComplete}
+              onSubmitNewName={onSubmitNewName}
+              onCheckTodo={onCheckTodo}
+              onDeleteTodo={onDeleteTodo}
+            />
+          ))}
+          {loading && <div className="loading text-xs mt-1">Loading</div>}
+        </>
+      )}
     </div>
   )
 }
 
-export default App;
+export default App

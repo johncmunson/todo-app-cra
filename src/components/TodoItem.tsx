@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 export interface TodoItemProps {
   id: string
@@ -11,7 +11,14 @@ export interface TodoItemProps {
 
 type TodoItemMode = 'view' | 'edit'
 
-export const TodoItem = ({ id, name, isComplete, onSubmitNewName, onCheckTodo, onDeleteTodo }: TodoItemProps) => {
+export const TodoItem = ({
+  id,
+  name,
+  isComplete,
+  onSubmitNewName,
+  onCheckTodo,
+  onDeleteTodo,
+}: TodoItemProps) => {
   const [mode, setMode] = useState<TodoItemMode>('view')
   const [newName, setNewName] = useState<string>(name)
 
@@ -31,17 +38,35 @@ export const TodoItem = ({ id, name, isComplete, onSubmitNewName, onCheckTodo, o
   }
 
   return (
-    <div className='flex space-between align-center'>
+    <div className="flex space-between align-center">
       <div>
-        <input className="mr-05" type="checkbox" checked={isComplete} onChange={() => onCheckTodo(id)} />
-        {
-          mode === 'view'
-            ? <span onClick={() => setMode('edit')} className={isComplete ? 'text-strikethrough' : ''}>{name}</span>
-            : <input type="text" value={newName} autoFocus onChange={_onNameChange} onKeyDown={_onSubmitNewName} onBlur={_onSubmitNewName} />
-        }
+        <input
+          className="mr-05"
+          type="checkbox"
+          checked={isComplete}
+          onChange={() => onCheckTodo(id)}
+        />
+        {mode === 'view' ? (
+          <span
+            onClick={() => setMode('edit')}
+            className={isComplete ? 'text-strikethrough' : ''}
+          >
+            {name}
+          </span>
+        ) : (
+          <input
+            type="text"
+            value={newName}
+            autoFocus
+            onChange={_onNameChange}
+            onKeyDown={_onSubmitNewName}
+            onBlur={_onSubmitNewName}
+          />
+        )}
       </div>
-      <div className="pointer-hover" onClick={() => onDeleteTodo(id)}>x</div>
+      <div className="pointer-hover" onClick={() => onDeleteTodo(id)}>
+        x
+      </div>
     </div>
   )
 }
-
