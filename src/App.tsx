@@ -9,13 +9,14 @@ function App() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [loading, setLoading] = useState<boolean>(true)
 
+  const fetchInitialData = async () => {
+    const todos = await todoService.fetchTodos()
+    setTodos(todos)
+    setLoading(false)
+  }
+
   useEffect(() => {
-    async function fetchTodos() {
-      const todos = await todoService.fetchTodos()
-      setTodos(todos)
-      setLoading(false)
-    }
-    fetchTodos()
+    fetchInitialData()
   }, [])
 
   const onCreateNewTodo = async (name: string) => {
@@ -84,7 +85,7 @@ function App() {
   return (
     <div className="app">
       <TodoInput
-        className='width-100'
+        className='width-100 mb-05'
         onSubmit={onCreateNewTodo}
       />
       {todos.map(todo => (
@@ -98,7 +99,7 @@ function App() {
           onDeleteTodo={onDeleteTodo}
         />
       ))}
-      {loading && <div className="loading">Loading</div>}
+      {loading && <div className="loading text-xs mt-1">Loading</div>}
     </div>
   )
 }

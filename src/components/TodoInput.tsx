@@ -20,6 +20,6 @@ export const TodoInput = ({ onSubmit, ...props }: TodoInputProps) => {
   }
 
   return (
-    <input type='text' value={todoText} onChange={_onChange} onKeyDown={_onSubmit} {...props} />
+    <input type='text' placeholder='Add a new todo...' value={todoText} onChange={_onChange} onKeyDown={_onSubmit} {...props} />
   )
 }

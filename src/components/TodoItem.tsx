@@ -20,21 +20,27 @@ export const TodoItem = ({ id, name, isComplete, onSubmitNewName, onCheckTodo, o
   }
 
   const _onSubmitNewName = (e: any) => {
-    if (e.key === 'Enter') {
-      onSubmitNewName(id, newName)
-      setMode('view')
+    if (e.key === 'Enter' || e.type === 'blur') {
+      if (newName === '') {
+        alert('Todo items cannot be empty')
+      } else {
+        onSubmitNewName(id, newName)
+        setMode('view')
+      }
     }
   }
 
   return (
-    <div>
-      {/* <button onClick={() => console.log(mode, name, newName)}>log</button> */}
-      <input type="checkbox" checked={isComplete} onChange={() => onCheckTodo(id)} />
-      {
-        mode === 'view'
-          ? <span onClick={() => setMode('edit')} className={isComplete ? 'text-strikethrough' : ''}>{name}</span>
-          : <input type="text" value={newName} autoFocus onChange={_onNameChange} onKeyDown={_onSubmitNewName} />
-      }
+    <div className='flex space-between align-center'>
+      <div>
+        <input className="mr-05" type="checkbox" checked={isComplete} onChange={() => onCheckTodo(id)} />
+        {
+          mode === 'view'
+            ? <span onClick={() => setMode('edit')} className={isComplete ? 'text-strikethrough' : ''}>{name}</span>
+            : <input type="text" value={newName} autoFocus onChange={_onNameChange} onKeyDown={_onSubmitNewName} onBlur={_onSubmitNewName} />
+        }
+      </div>
+      <div className="pointer-hover" onClick={() => onDeleteTodo(id)}>x</div>
     </div>
   )
 }

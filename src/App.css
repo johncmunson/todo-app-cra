@@ -7,6 +7,22 @@
   width: 100%;
 }
 
+.mt-1 {
+  margin-top: 1em;
+}
+
+.mr-05 {
+  margin-right: 0.5em;
+}
+
+.mb-05 {
+  margin-bottom: 0.5em;
+}
+
+.text-xs {
+  font-size: x-small;
+}
+
 .text-strikethrough {
   text-decoration: line-through;
 }
@@ -25,4 +41,20 @@
   to {
     width: 20px;    
   }
+}
+
+.flex {
+  display: flex;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.align-center {
+  align-items: flex-end;
+}
+
+.pointer-hover:hover {
+  cursor: pointer;
 }
