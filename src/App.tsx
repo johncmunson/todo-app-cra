@@ -6,6 +6,7 @@ import { TodoInput } from './components/TodoInput'
 import * as todoService from './services/todoService'
 import { TodoFooter } from './components/TodoFooter'
 import { TodoHeader } from './components/TodoHeader'
+import useBodyClass from './hooks/useBodyClass'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
@@ -13,8 +14,11 @@ function App() {
   const [allFilteredTodosComplete, setAllFilteredTodosComplete] = useState<boolean>(false)
   const [remainingTodoCount, setRemainingTodoCount] = useState<number>(0)
   const [activeFilter, setActiveFilter] = useState<string>('all')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [hydrating, setHydrating] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
+
+  useBodyClass(theme === 'light' ? 'bg-white' : 'bg-grey')
 
   // Hydrate app with initial data
   useEffect(() => {
@@ -60,6 +64,11 @@ function App() {
 
     setFilteredTodos(filteredTodos)
   }, [todos, activeFilter])
+
+  const onToggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(newTheme)
+  }
 
   const onCreateNewTodo = async (name: string) => {
     setLoading(true)
@@ -156,7 +165,10 @@ function App() {
         <div className="loading mt-1">Loading</div>
       ) : (
         <>
-          <TodoHeader />
+          <TodoHeader
+            theme={theme}
+            onToggleTheme={onToggleTheme}
+          />
           <div className="flex">
             <input className="mr-05" type="checkbox" checked={allFilteredTodosComplete} onChange={onCheckAll} />
             <TodoInput className="flex-grow" onSubmit={onCreateNewTodo} />

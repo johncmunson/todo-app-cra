@@ -83,6 +83,14 @@
   cursor: pointer;
 }
 
+.bg-white {
+  background-color: white;
+}
+
+.bg-grey {
+  background-color: lightgray;
+}
+
 /* 
  * On/Off Switch
  */
