@@ -24,7 +24,7 @@ function App() {
 
   // allComplete is a computed property that depends on other state
   useEffect(() => {
-    const allTodosComplete = todos.every(_ => _.isComplete)
+    const allTodosComplete = todos.every(_ => _.isComplete) && todos.length > 0
     setAllComplete(allTodosComplete)
   }, [todos])
 
@@ -102,7 +102,7 @@ function App() {
             <TodoInput className="flex-grow" onSubmit={onCreateNewTodo} />
           </div>
           <hr />
-          {todos.map((todo) => (
+          {todos.length > 0 ? todos.map((todo) => (
             <TodoItem
               key={todo.id}
               id={todo.id}
@@ -112,7 +112,7 @@ function App() {
               onCheckTodo={onCheckTodo}
               onDeleteTodo={onDeleteTodo}
             />
-          ))}
+          )) : <div className="text-lg">You are all caught up!</div>}
           {loading && <div className="loading text-xs mt-1">Loading</div>}
         </>
       )}

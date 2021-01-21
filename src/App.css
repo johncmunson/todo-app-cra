@@ -23,6 +23,10 @@
   font-size: x-small;
 }
 
+.text-lg {
+  font-size: large;
+}
+
 .text-strikethrough {
   text-decoration: line-through;
 }
