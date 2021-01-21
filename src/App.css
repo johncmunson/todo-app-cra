@@ -47,6 +47,10 @@
   display: flex;
 }
 
+.flex-grow {
+  flex: 1;
+}
+
 .space-between {
   justify-content: space-between;
 }

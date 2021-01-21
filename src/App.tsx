@@ -7,18 +7,26 @@ import * as todoService from './services/todoService'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
+  const [allComplete, setAllComplete] = useState<boolean>(false)
   const [hydrating, setHydrating] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const fetchInitialData = async () => {
-    const todos = await todoService.fetchTodos()
-    setTodos(todos)
-    setHydrating(false)
-  }
-
+  // Hydrate app with initial data
   useEffect(() => {
+    const fetchInitialData = async () => {
+      const todos = await todoService.fetchTodos()
+      setTodos(todos)
+      setHydrating(false)
+    }
+
     fetchInitialData()
   }, [])
+
+  // allComplete is a computed property that depends on other state
+  useEffect(() => {
+    const allTodosComplete = todos.every(_ => _.isComplete)
+    setAllComplete(allTodosComplete)
+  }, [todos])
 
   const onCreateNewTodo = async (name: string) => {
     setLoading(true)
@@ -40,7 +48,6 @@ function App() {
       { ...todo, name: newName },
       ...todos.slice(todoIndex + 1),
     ])
-
     await todoService.updateTodo(id, { name: newName })
 
     setLoading(false)
@@ -65,13 +72,20 @@ function App() {
     setLoading(false)
   }
 
+  const onCheckAll = async () => {
+    setLoading(true)
+
+    setTodos(todos.map(_ => ({ ..._, isComplete: !allComplete })))
+    await Promise.all(todos.map(_ => todoService.updateTodo(_.id, { isComplete: !allComplete })))
+
+    setLoading(false)
+  }
+
   const onDeleteTodo = async (id: string) => {
     setLoading(true)
 
     const todoIndex = todos.findIndex((todo) => todo.id === id)
-
     setTodos([...todos.slice(0, todoIndex), ...todos.slice(todoIndex + 1)])
-
     await todoService.deleteTodo(id)
 
     setLoading(false)
@@ -83,7 +97,11 @@ function App() {
         <div className="loading mt-1">Loading</div>
       ) : (
         <>
-          <TodoInput className="width-100 mb-05" onSubmit={onCreateNewTodo} />
+          <div className="flex">
+            <input className="mr-05" type="checkbox" checked={allComplete} onChange={onCheckAll} />
+            <TodoInput className="flex-grow" onSubmit={onCreateNewTodo} />
+          </div>
+          <hr />
           {todos.map((todo) => (
             <TodoItem
               key={todo.id}
