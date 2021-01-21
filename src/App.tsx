@@ -5,11 +5,12 @@ import { TodoItem } from './components/TodoItem'
 import { TodoInput } from './components/TodoInput'
 import * as todoService from './services/todoService'
 import { TodoFooter } from './components/TodoFooter'
+import { TodoHeader } from './components/TodoHeader'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
-  // const [filteredTodos, setFilteredTodos] = useState<Todo[]>([])
-  const [allComplete, setAllComplete] = useState<boolean>(false)
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([])
+  const [allFilteredTodosComplete, setAllFilteredTodosComplete] = useState<boolean>(false)
   const [remainingTodoCount, setRemainingTodoCount] = useState<number>(0)
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [hydrating, setHydrating] = useState<boolean>(true)
@@ -26,11 +27,11 @@ function App() {
     fetchInitialData()
   }, [])
 
-  // allComplete is a computed property that depends on other state
+  // allFilteredTodosComplete is a computed property that depends on other state
   useEffect(() => {
-    const allTodosComplete = todos.every(_ => _.isComplete) && todos.length > 0
-    setAllComplete(allTodosComplete)
-  }, [todos])
+    const allComplete = filteredTodos.every(_ => _.isComplete) && filteredTodos.length > 0
+    setAllFilteredTodosComplete(allComplete)
+  }, [filteredTodos])
 
   // remainingTodoCount is a computed property that depends on other state
   useEffect(() => {
@@ -39,26 +40,26 @@ function App() {
   }, [todos])
 
   // filteredTodos is a computed property that depends on other state
-  // useEffect(() => {
-  //   const filteredTodos = todos.filter(todo => {
-  //     switch (activeFilter) {
-  //       case 'all': {
-  //         return true
-  //       }
-  //       case 'active': {
-  //         return !todo.isComplete
-  //       }
-  //       case 'complete': {
-  //         return todo.isComplete
-  //       }
-  //       default: {
-  //         return true
-  //       }
-  //     }
-  //   })
+  useEffect(() => {
+    const filteredTodos = todos.filter(todo => {
+      switch (activeFilter) {
+        case 'all': {
+          return true
+        }
+        case 'active': {
+          return !todo.isComplete
+        }
+        case 'complete': {
+          return todo.isComplete
+        }
+        default: {
+          return true
+        }
+      }
+    })
 
-  //   setFilteredTodos(filteredTodos)
-  // }, [todos, activeFilter])
+    setFilteredTodos(filteredTodos)
+  }, [todos, activeFilter])
 
   const onCreateNewTodo = async (name: string) => {
     setLoading(true)
@@ -107,8 +108,16 @@ function App() {
   const onCheckAll = async () => {
     setLoading(true)
 
-    setTodos(todos.map(_ => ({ ..._, isComplete: !allComplete })))
-    await Promise.all(todos.map(_ => todoService.updateTodo(_.id, { isComplete: !allComplete })))
+    // Check/uncheck all of the "visible" todos
+    const newTodos = todos.map(todo => {
+      if (filteredTodos.filter(filteredTodo => filteredTodo.id === todo.id).length > 0) {
+        return { ...todo, isComplete: !allFilteredTodosComplete }
+      }
+      return todo
+    })
+
+    setTodos(newTodos)
+    await Promise.all(newTodos.map(_ => todoService.updateTodo(_.id, { isComplete: _.isComplete })))
 
     setLoading(false)
   }
@@ -147,12 +156,13 @@ function App() {
         <div className="loading mt-1">Loading</div>
       ) : (
         <>
+          <TodoHeader />
           <div className="flex">
-            <input className="mr-05" type="checkbox" checked={allComplete} onChange={onCheckAll} />
+            <input className="mr-05" type="checkbox" checked={allFilteredTodosComplete} onChange={onCheckAll} />
             <TodoInput className="flex-grow" onSubmit={onCreateNewTodo} />
           </div>
-          <hr />
-          {todos.length > 0 ? todos.map((todo) => (
+          <hr className="opacity-50" />
+          {filteredTodos.length > 0 ? filteredTodos.map((todo) => (
             <TodoItem
               key={todo.id}
               id={todo.id}

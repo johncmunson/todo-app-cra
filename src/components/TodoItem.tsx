@@ -38,7 +38,7 @@ export const TodoItem = ({
   }
 
   return (
-    <div className="flex space-between align-center">
+    <div className="flex space-between align-baseline">
       <div>
         <input
           className="mr-05"
