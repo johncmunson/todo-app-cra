@@ -1,13 +1,17 @@
 import './App.css'
 import { Todo } from './models/Todo'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { TodoItem } from './components/TodoItem'
 import { TodoInput } from './components/TodoInput'
 import * as todoService from './services/todoService'
+import { TodoFooter } from './components/TodoFooter'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
+  // const [filteredTodos, setFilteredTodos] = useState<Todo[]>([])
   const [allComplete, setAllComplete] = useState<boolean>(false)
+  const [remainingTodoCount, setRemainingTodoCount] = useState<number>(0)
+  const [activeFilter, setActiveFilter] = useState<string>('all')
   const [hydrating, setHydrating] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -27,6 +31,34 @@ function App() {
     const allTodosComplete = todos.every(_ => _.isComplete) && todos.length > 0
     setAllComplete(allTodosComplete)
   }, [todos])
+
+  // remainingTodoCount is a computed property that depends on other state
+  useEffect(() => {
+    const remainingTodos = todos.filter(_ => !_.isComplete)
+    setRemainingTodoCount(remainingTodos.length)
+  }, [todos])
+
+  // filteredTodos is a computed property that depends on other state
+  // useEffect(() => {
+  //   const filteredTodos = todos.filter(todo => {
+  //     switch (activeFilter) {
+  //       case 'all': {
+  //         return true
+  //       }
+  //       case 'active': {
+  //         return !todo.isComplete
+  //       }
+  //       case 'complete': {
+  //         return todo.isComplete
+  //       }
+  //       default: {
+  //         return true
+  //       }
+  //     }
+  //   })
+
+  //   setFilteredTodos(filteredTodos)
+  // }, [todos, activeFilter])
 
   const onCreateNewTodo = async (name: string) => {
     setLoading(true)
@@ -91,6 +123,24 @@ function App() {
     setLoading(false)
   }
 
+  const onClickFilter = (newFilter: string) => {
+    if (newFilter !== activeFilter) {
+      setActiveFilter(newFilter)
+    }
+  }
+
+  const onClearCompleted = async () => {
+    setLoading(true)
+
+    const activeTodos = todos.filter(_ => !_.isComplete)
+    const completedTodos = todos.filter(_ => _.isComplete)
+
+    setTodos(activeTodos)
+    await Promise.all(completedTodos.map(_ => todoService.deleteTodo(_.id)))
+
+    setLoading(false)
+  }
+
   return (
     <div className="app">
       {hydrating ? (
@@ -112,7 +162,14 @@ function App() {
               onCheckTodo={onCheckTodo}
               onDeleteTodo={onDeleteTodo}
             />
-          )) : <div className="text-lg">You are all caught up!</div>}
+          )) : <div className="text-lg">No todos</div>}
+          <TodoFooter
+            filters={['all', 'active', 'complete']}
+            activeFilter={activeFilter}
+            remainingTodoCount={remainingTodoCount}
+            onClickFilter={onClickFilter}
+            onClearCompleted={onClearCompleted}
+          />
           {loading && <div className="loading text-xs mt-1">Loading</div>}
         </>
       )}

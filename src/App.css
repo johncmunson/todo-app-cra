@@ -31,6 +31,10 @@
   text-decoration: line-through;
 }
 
+.text-bold {
+  font-weight: bold;
+}
+
 .loading:after {
   overflow: hidden;
   display: inline-block;
