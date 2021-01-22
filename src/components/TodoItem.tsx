@@ -48,6 +48,7 @@ export const TodoItem = ({
         />
         {mode === 'view' ? (
           <span
+            data-testid="view-todo-item"
             onClick={() => setMode('edit')}
             className={isComplete ? 'text-strikethrough' : ''}
           >
@@ -55,6 +56,7 @@ export const TodoItem = ({
           </span>
         ) : (
           <input
+            data-testid="edit-todo-item"
             type="text"
             value={newName}
             autoFocus
