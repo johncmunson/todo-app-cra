@@ -1,4 +1,4 @@
-import { capitalize } from "../util"
+import { capitalize } from '../util'
 import classNames from 'classnames'
 
 type TodoFooterProps = {
@@ -15,7 +15,7 @@ export const TodoFooter = ({
   activeFilter,
   remainingTodoCount,
   onClickFilter,
-  onClearCompleted
+  onClearCompleted,
 }: TodoFooterProps) => {
   return (
     <div className="flex space-between mt-1 ">
@@ -35,7 +35,9 @@ export const TodoFooter = ({
           </span>
         ))}
       </div>
-      <div className="pointer-hover" onClick={onClearCompleted}>Clear Completed</div>
+      <div className="pointer-hover" onClick={onClearCompleted}>
+        Clear Completed
+      </div>
     </div>
   )
 }

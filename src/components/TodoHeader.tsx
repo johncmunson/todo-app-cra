@@ -1,4 +1,4 @@
-import { format_date_MM_DD_YYYY } from "../util"
+import { format_date_MM_DD_YYYY } from '../util'
 
 type TodoHeaderProps = {
   theme: 'light' | 'dark'
@@ -11,7 +11,11 @@ export const TodoHeader = ({ theme, onToggleTheme }: TodoHeaderProps) => {
       <div>{format_date_MM_DD_YYYY(new Date())}</div>
       <div className="text-xl">todos</div>
       <label className="switch">
-        <input type="checkbox" checked={theme === 'dark'} onChange={onToggleTheme} />
+        <input
+          type="checkbox"
+          checked={theme === 'dark'}
+          onChange={onToggleTheme}
+        />
         <span className="slider round"></span>
       </label>
     </div>

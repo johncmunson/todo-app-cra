@@ -11,7 +11,10 @@ import useBodyClass from './hooks/useBodyClass'
 function App() {
   const [todos, setTodos] = useState<Todo[]>([])
   const [filteredTodos, setFilteredTodos] = useState<Todo[]>([])
-  const [allFilteredTodosComplete, setAllFilteredTodosComplete] = useState<boolean>(false)
+  const [
+    allFilteredTodosComplete,
+    setAllFilteredTodosComplete,
+  ] = useState<boolean>(false)
   const [remainingTodoCount, setRemainingTodoCount] = useState<number>(0)
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
@@ -33,19 +36,20 @@ function App() {
 
   // allFilteredTodosComplete is a computed property that depends on other state
   useEffect(() => {
-    const allComplete = filteredTodos.every(_ => _.isComplete) && filteredTodos.length > 0
+    const allComplete =
+      filteredTodos.every((_) => _.isComplete) && filteredTodos.length > 0
     setAllFilteredTodosComplete(allComplete)
   }, [filteredTodos])
 
   // remainingTodoCount is a computed property that depends on other state
   useEffect(() => {
-    const remainingTodos = todos.filter(_ => !_.isComplete)
+    const remainingTodos = todos.filter((_) => !_.isComplete)
     setRemainingTodoCount(remainingTodos.length)
   }, [todos])
 
   // filteredTodos is a computed property that depends on other state
   useEffect(() => {
-    const filteredTodos = todos.filter(todo => {
+    const filteredTodos = todos.filter((todo) => {
       switch (activeFilter) {
         case 'all': {
           return true
@@ -118,15 +122,22 @@ function App() {
     setLoading(true)
 
     // Check/uncheck all of the "visible" todos
-    const newTodos = todos.map(todo => {
-      if (filteredTodos.filter(filteredTodo => filteredTodo.id === todo.id).length > 0) {
+    const newTodos = todos.map((todo) => {
+      if (
+        filteredTodos.filter((filteredTodo) => filteredTodo.id === todo.id)
+          .length > 0
+      ) {
         return { ...todo, isComplete: !allFilteredTodosComplete }
       }
       return todo
     })
 
     setTodos(newTodos)
-    await Promise.all(newTodos.map(_ => todoService.updateTodo(_.id, { isComplete: _.isComplete })))
+    await Promise.all(
+      newTodos.map((_) =>
+        todoService.updateTodo(_.id, { isComplete: _.isComplete })
+      )
+    )
 
     setLoading(false)
   }
@@ -150,11 +161,11 @@ function App() {
   const onClearCompleted = async () => {
     setLoading(true)
 
-    const activeTodos = todos.filter(_ => !_.isComplete)
-    const completedTodos = todos.filter(_ => _.isComplete)
+    const activeTodos = todos.filter((_) => !_.isComplete)
+    const completedTodos = todos.filter((_) => _.isComplete)
 
     setTodos(activeTodos)
-    await Promise.all(completedTodos.map(_ => todoService.deleteTodo(_.id)))
+    await Promise.all(completedTodos.map((_) => todoService.deleteTodo(_.id)))
 
     setLoading(false)
   }
@@ -165,26 +176,33 @@ function App() {
         <div className="loading mt-1">Loading</div>
       ) : (
         <>
-          <TodoHeader
-            theme={theme}
-            onToggleTheme={onToggleTheme}
-          />
+          <TodoHeader theme={theme} onToggleTheme={onToggleTheme} />
           <div className="flex">
-            <input className="mr-05" type="checkbox" checked={allFilteredTodosComplete} disabled={filteredTodos.length === 0} onChange={onCheckAll} />
+            <input
+              className="mr-05"
+              type="checkbox"
+              checked={allFilteredTodosComplete}
+              disabled={filteredTodos.length === 0}
+              onChange={onCheckAll}
+            />
             <TodoInput className="flex-grow" onSubmit={onCreateNewTodo} />
           </div>
           <hr className="opacity-50" />
-          {filteredTodos.length > 0 ? filteredTodos.map((todo) => (
-            <TodoItem
-              key={todo.id}
-              id={todo.id}
-              name={todo.name}
-              isComplete={todo.isComplete}
-              onSubmitNewName={onSubmitNewName}
-              onCheckTodo={onCheckTodo}
-              onDeleteTodo={onDeleteTodo}
-            />
-          )) : <div className="text-lg">No todos</div>}
+          {filteredTodos.length > 0 ? (
+            filteredTodos.map((todo) => (
+              <TodoItem
+                key={todo.id}
+                id={todo.id}
+                name={todo.name}
+                isComplete={todo.isComplete}
+                onSubmitNewName={onSubmitNewName}
+                onCheckTodo={onCheckTodo}
+                onDeleteTodo={onDeleteTodo}
+              />
+            ))
+          ) : (
+            <div className="text-lg">No todos</div>
+          )}
           <TodoFooter
             filters={['all', 'active', 'complete']}
             activeFilter={activeFilter}
