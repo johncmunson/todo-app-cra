@@ -15,6 +15,7 @@ export const TodoHeader = ({ theme, onToggleTheme }: TodoHeaderProps) => {
           type="checkbox"
           checked={theme === 'dark'}
           onChange={onToggleTheme}
+          data-testid="dark-mode-toggle"
         />
         <span className="slider round"></span>
       </label>

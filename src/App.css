@@ -3,6 +3,11 @@
   width: 30em;
 }
 
+.hidden {
+  display: none;
+  visibility: hidden; /* Prevent element from affecting the box model, e.g. whitespace between visible, surrounding elements  */
+}
+
 .width-100 {
   width: 100%;
 }
