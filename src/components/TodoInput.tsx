@@ -13,7 +13,7 @@ export const TodoInput = ({ onSubmit, ...props }: TodoInputProps) => {
   }
 
   const _onSubmit = (e: any) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && todoText !== '') {
       onSubmit(todoText)
       setTodoText('')
     }

@@ -170,7 +170,7 @@ function App() {
             onToggleTheme={onToggleTheme}
           />
           <div className="flex">
-            <input className="mr-05" type="checkbox" checked={allFilteredTodosComplete} onChange={onCheckAll} />
+            <input className="mr-05" type="checkbox" checked={allFilteredTodosComplete} disabled={filteredTodos.length === 0} onChange={onCheckAll} />
             <TodoInput className="flex-grow" onSubmit={onCreateNewTodo} />
           </div>
           <hr className="opacity-50" />
